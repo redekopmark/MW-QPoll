@@ -92,17 +92,17 @@ class PollResults extends qp_SpecialPage {
 			$wgOut->addExtensionStyle( qp_Setup::$ScriptPath . '/clientside/qp_results.css' );
 		}
 		if ( self::$UsersLink == "" ) {
-			self::$UsersLink = $this->qpLink( $this->getTitle(), wfMsg( 'qp_users_list' ), array( "style" => "font-weight:bold;" ), array( 'action' => 'users' ) );
+			self::$UsersLink = $this->qpLink( $this->getTitle(), wfMessage( 'qp_users_list' ), array( "style" => "font-weight:bold;" ), array( 'action' => 'users' ) );
 		}
 		if ( self::$PollsLink == "" ) {
-			self::$PollsLink = $this->qpLink( $this->getTitle(), wfMsg( 'qp_polls_list' ), array( "style" => "font-weight:bold;" ) );
+			self::$PollsLink = $this->qpLink( $this->getTitle(), wfMessage( 'qp_polls_list' ), array( "style" => "font-weight:bold;" ) );
 		}
 		$wgOut->addHTML( '<div class="qpoll">' );
 		$output = '';
 		$this->setHeaders();
 		$cmd = $wgRequest->getVal( 'action' );
 		if ( $cmd === null ) {
-			list( $limit, $offset ) = wfCheckLimits();
+			list( $limit, $offset ) = $wgRequest->getLimitOffset( $deflimit, $optionname );
 			$qpl = new qp_PollsList();
 			$qpl->doQuery( $offset, $limit );
 		} else {
@@ -179,15 +179,15 @@ class PollResults extends qp_SpecialPage {
 
 	private function getAnswerHeader( qp_PollStore $pollStore ) {
 		$tags = array(
-			array( '__tag' => 'div', 'style' => 'font-weight:bold;', wfMsg( 'qp_results_submit_attempts', intval( $pollStore->attempts ) ) )
+			array( '__tag' => 'div', 'style' => 'font-weight:bold;', wfMessage( 'qp_results_submit_attempts', intval( $pollStore->attempts ) ) )
 		);
 		$interpTitle = $pollStore->getInterpTitle();
 		if ( !( $interpTitle instanceof Title ) ) {
-			$tags[] = array( '__tag' => 'div', wfMsg( 'qp_poll_has_no_interpretation' ) );
+			$tags[] = array( '__tag' => 'div', wfMessage( 'qp_poll_has_no_interpretation' ) );
 			return $tags;
 		}
 		$interp_link = $this->qpLink( $interpTitle, $interpTitle->getPrefixedText() );
-		$tags[] = array( '__tag' => 'div', wfMsg( 'qp_browse_to_interpretation', $interp_link ) );
+		$tags[] = array( '__tag' => 'div', wfMessage( 'qp_browse_to_interpretation', $interp_link ) );
 		$interpResultView = new qp_InterpResultView( true );
 		$interpResultView->showInterpResults( $tags, $pollStore->interpResult, true );
 		return $tags;
@@ -218,7 +218,7 @@ class PollResults extends qp_SpecialPage {
 				$pollStore->mPollId,
 				$pollStore->getTitle()
 		);
-		$head[] = wfMsg( 'qp_browse_to_user', $user_link );
+		$head[] = wfMessage( 'qp_browse_to_user', $user_link );
 		$head[] = $this->getAnswerHeader( $pollStore );
 		qp_Renderer::applyAttrsToRow( $head, array( '__tag' => 'li', '__end' => "\n" ) );
 		$head = array( '__tag' => 'ul', 'class' => 'head', '__end' => "\n", $head );
@@ -251,24 +251,24 @@ class PollResults extends qp_SpecialPage {
 				$interpTitle = $pollStore->getInterpTitle();
 				if ( $interpTitle instanceof Title ) {
 					$interp_link = $this->qpLink( $interpTitle, $interpTitle->getPrefixedText() );
-					$output .= wfMsg( 'qp_browse_to_interpretation', $interp_link ) . "<br />\n";
+					$output .= wfMessage( 'qp_browse_to_interpretation', $interp_link ) . "<br />\n";
 				}
 				$output .=
 					$this->qpLink(
 						$this->getTitle(),
-						wfMsg( 'qp_export_to_xls' ),
+						wfMessage( 'qp_export_to_xls' ),
 						array( "style" => "font-weight:bold;" ),
 						array( 'action' => 'stats_xls', 'id' => $pid )
 					) . "<br />\n" .
 					$this->qpLink(
 						$this->getTitle(),
-						wfMsg( 'qp_voices_to_xls' ),
+						wfMessage( 'qp_voices_to_xls' ),
 						array( "style" => "font-weight:bold;" ),
 						array( 'action' => 'voices_xls', 'id' => $pid )
 					) . "<br />\n" .
 					$this->qpLink(
 						$this->getTitle(),
-						wfMsg( 'qp_interpretation_results_to_xls' ),
+						wfMessage( 'qp_interpretation_results_to_xls' ),
 						array( "style" => "font-weight:bold;" ),
 						array( 'action' => 'interpretation_xls', 'id' => $pid )
 					) . "<br />\n";
@@ -366,10 +366,10 @@ class qp_UsersList extends qp_QueryPage {
 		$this->cmd = $cmd;
 		if ( $cmd == 'users' ) {
 			$this->order_by = 'count(pid) DESC, name ASC ';
-			$this->different_order_by_link = $this->qpLink( $this->getTitle(), wfMsg( 'qp_order_by_username' ), array(), array( "action" => "users_a" ) );
+			$this->different_order_by_link = $this->qpLink( $this->getTitle(), wfMessage( 'qp_order_by_username' ), array(), array( "action" => "users_a" ) );
 		} else {
 			$this->order_by = 'name ';
-			$this->different_order_by_link = $this->qpLink( $this->getTitle(), wfMsg( 'qp_order_by_polls_count' ), array(), array( "action" => "users" ) );
+			$this->different_order_by_link = $this->qpLink( $this->getTitle(), wfMessage( 'qp_order_by_polls_count' ), array(), array( "action" => "users" ) );
 		}
 	}
 
@@ -416,7 +416,7 @@ class qp_UsersList extends qp_QueryPage {
 	function getPageHeader() {
 		return PollResults::getPollsLink() .
 			'<ul class="head">' .
-			wfMsg( 'qp_users_list' ) .
+			wfMessage( 'qp_users_list' ) .
 			'<li>' . $this->different_order_by_link .
 			'</li></ul>';
 	}
@@ -493,9 +493,9 @@ class qp_UserPollsList extends qp_QueryPage {
 		$poll_title = Title::makeTitle( $result->ns, $result->title, qp_AbstractPoll::s_getPollTitleFragment( $result->poll_id, '' ) );
 		$pagename = qp_Setup::specialchars( $wgContLang->convert( $poll_title->getPrefixedText() ) );
 		$pollname = qp_Setup::specialchars( $result->poll_id );
-		$goto_link = $this->qpLink( $poll_title, wfMsg( 'qp_source_link' ) );
-		$voice_link = $this->qpLink( $this->getTitle(), wfMsg( 'qp_voice_link' . ( $this->inverse ? "_inv" : "" ) ), array(), array( "id" => intval( $result->pid ), "uid" => $this->uid, "action" => "uvote" ) );
-		$link = wfMsg( 'qp_results_line_qupl', $pagename, $pollname, $voice_link );
+		$goto_link = $this->qpLink( $poll_title, wfMessage( 'qp_source_link' ) );
+		$voice_link = $this->qpLink( $this->getTitle(), wfMessage( 'qp_voice_link' . ( $this->inverse ? "_inv" : "" ) ), array(), array( "id" => intval( $result->pid ), "uid" => $this->uid, "action" => "uvote" ) );
+		$link = wfMessage( 'qp_results_line_qupl', $pagename, $pollname, $voice_link );
 		return $link;
 	}
 
@@ -546,7 +546,7 @@ class qp_PollsList extends qp_QueryPage {
 	function getPageHeader() {
 		return PollResults::getUsersLink() .
 			'<ul class="head"><li>' .
-			wfMsg( 'qp_polls_list' ) .
+			wfMessage( 'qp_polls_list' ) .
 			'</li></ul>';
 	}
 
@@ -588,7 +588,7 @@ class qp_PollUsersList extends qp_QueryPage {
 					$row->poll_id,
 					$poll_title
 			);
-			$head[] = wfMsg( 'qp_header_line_qpul', wfMsg( $this->inverse ? 'qp_not_participated_link' : 'qp_users_link' ), $pagename, $pollname );
+			$head[] = wfMessage( 'qp_header_line_qpul', wfMessage( $this->inverse ? 'qp_not_participated_link' : 'qp_users_link' ), $pagename, $pollname );
 			qp_Renderer::applyAttrsToRow( $head, array( '__tag' => 'li', '__end' => "\n" ) );
 			$head = array( '__tag' => 'ul', 'class' => 'head', $head );
 			$link = PollResults::getPollsLink() .
@@ -624,8 +624,8 @@ class qp_PollUsersList extends qp_QueryPage {
 			$userName = $result->username;
 			$userTitle = Title::makeTitleSafe( NS_USER, $userName );
 			$user_link = $this->qpLink( $userTitle, $userName );
-			$voice_link = $this->qpLink( $this->getTitle(), wfMsg( 'qp_voice_link' . ( $this->inverse ? "_inv" : "" ) ), array(), array( "id" => intval( $this->pid ), "uid" => $uid, "action" => "uvote" ) );
-			$link = wfMsg( 'qp_results_line_qpul', $user_link, $voice_link );
+			$voice_link = $this->qpLink( $this->getTitle(), wfMessage( 'qp_voice_link' . ( $this->inverse ? "_inv" : "" ) ), array(), array( "id" => intval( $this->pid ), "uid" => $uid, "action" => "uvote" ) );
+			$link = wfMessage( 'qp_results_line_qpul', $user_link, $voice_link );
 		}
 		return $link;
 	}
@@ -686,7 +686,7 @@ class qp_UserCellList extends qp_QueryPage {
 					$pollStore->mPollId,
 					$poll_title
 				);
-				$head[] = wfMsg( 'qp_header_line_qpul', wfMsg( 'qp_users_link' ), $pagename, $pollname );
+				$head[] = wfMessage( 'qp_header_line_qpul', wfMessage( 'qp_users_link' ), $pagename, $pollname );
 				$ques_found = false;
 				foreach ( $pollStore->Questions as $qdata ) {
 					if ( $qdata->question_id == $this->question_id ) {
@@ -695,15 +695,15 @@ class qp_UserCellList extends qp_QueryPage {
 					}
 				}
 				if ( $ques_found ) {
-					$qpa = wfMsg( 'qp_header_line_qucl', $this->question_id, qp_Setup::entities( $qdata->CommonQuestion ) );
+					$qpa = wfMessage( 'qp_header_line_qucl', $this->question_id, qp_Setup::entities( $qdata->CommonQuestion ) );
 					if ( array_key_exists( $this->cat_id, $qdata->Categories ) ) {
 						$categ = &$qdata->Categories[ $this->cat_id ];
 						$proptext = $qdata->ProposalText[ $this->proposal_id ];
 						$cat_name = $categ['name'];
 						if ( array_key_exists( 'spanId', $categ ) ) {
-							$cat_name =  wfMsg( 'qp_full_category_name', $cat_name, $qdata->CategorySpans[ $categ['spanId'] ]['name'] );
+							$cat_name =  wfMessage( 'qp_full_category_name', $cat_name, $qdata->CategorySpans[ $categ['spanId'] ]['name'] );
 						}
-						$head[] = wfMsg( 'qp_header_line_qucl',
+						$head[] = wfMessage( 'qp_header_line_qucl',
 							$this->question_id,
 							qp_Setup::entities( $qdata->CommonQuestion ),
 							qp_Setup::entities( $proptext ),
@@ -747,9 +747,9 @@ class qp_UserCellList extends qp_QueryPage {
 			$userName = $result->username;
 			$userTitle = Title::makeTitleSafe( NS_USER, $userName );
 			$user_link = $this->qpLink( $userTitle, $userName );
-			$voice_link = $this->qpLink( $this->getTitle(), wfMsg( 'qp_voice_link' . ( $this->inverse ? "_inv" : "" ) ), array(), array( "id" => intval( $this->pid ), "uid" => $uid, "action" => "uvote" ) );
+			$voice_link = $this->qpLink( $this->getTitle(), wfMessage( 'qp_voice_link' . ( $this->inverse ? "_inv" : "" ) ), array(), array( "id" => intval( $this->pid ), "uid" => $uid, "action" => "uvote" ) );
 			$text_answer = ( $result->text_answer == '' ) ? '' : '<i>' . qp_Setup::entities( $result->text_answer ) . '</i>';
-			$link = wfMsg( 'qp_results_line_qucl', $user_link, $voice_link, $text_answer );
+			$link = wfMessage( 'qp_results_line_qucl', $user_link, $voice_link, $text_answer );
 		}
 		return $link;
 	}

@@ -134,7 +134,7 @@ class qp_QuestionDataResults {
 							$cell = array( 0 => $formatted_cell, "style" => "color:gray" );
 						} else {
 							$cell = array( 0 => $page->qpLink( $current_title, $formatted_cell,
-								array( "title" => wfMsgExt( 'qp_votes_count', array( 'parsemag' ), $ctrl->Votes[ $propkey ][ $catkey ] ) ),
+								array( "title" => wfMessage( 'qp_votes_count', array( 'parsemag' ), $ctrl->Votes[ $propkey ][ $catkey ] ) ),
 								array( "action" => "qpcusers", "id" => $pid, "qid" => $ctrl->question_id, "pid" => $propkey, "cid" => $catkey ) ) );
 						}
 						if ( $spansUsed ) {

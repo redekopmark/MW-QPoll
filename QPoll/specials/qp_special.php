@@ -69,20 +69,20 @@ class qp_SpecialPage extends SpecialPage {
 	 */
 	function showPollActionsList( $pid, $poll_id, Title $poll_title ) {
 		global $wgContLang;
-		return wfMsg(
+		return wfMessage(
 			'qp_results_line_qpl',
 			# pagename
 			qp_Setup::specialchars( $wgContLang->convert( $poll_title->getPrefixedText() ) ),
 			# polltitle
 			qp_Setup::specialchars( $poll_id ),
 			# goto link
-			$this->qpLink( $poll_title, wfMsg( 'qp_source_link' ) ),
+			$this->qpLink( $poll_title, wfMessage( 'qp_source_link' ) ),
 			# voices link
-			$this->qpLink( $this->getTitle(), wfMsg( 'qp_stats_link' ), array(), array( "id" => intval( $pid ), "action" => "stats" ) ),
+			$this->qpLink( $this->getTitle(), wfMessage( 'qp_stats_link' ), array(), array( "id" => intval( $pid ), "action" => "stats" ) ),
 			# users link
-			$this->qpLink( $this->getTitle(), wfMsg( 'qp_users_link' ), array(), array( "id" => intval( $pid ), "action" => "pulist" ) ),
+			$this->qpLink( $this->getTitle(), wfMessage( 'qp_users_link' ), array(), array( "id" => intval( $pid ), "action" => "pulist" ) ),
 			# not participated link
-			$this->qpLink( $this->getTitle(), wfMsg( 'qp_not_participated_link' ), array(), array( "id" => intval( $pid ), "action" => "npulist" ) )
+			$this->qpLink( $this->getTitle(), wfMessage( 'qp_not_participated_link' ), array(), array( "id" => intval( $pid ), "action" => "npulist" ) )
 		);
 	}
 
@@ -121,7 +121,7 @@ abstract class qp_QueryPage extends qp_SpecialPage {
 			// often disable 'next' link when we reach the end
 			$atend = $num < $limit;
 
-			$sl = wfViewPrevNext( $offset, $limit ,
+			$sl = Language::viewPrevNext( $offset, $limit ,
 				$wgContLang->specialPage( $this->queryPageName() ),
 				wfArrayToCGI( $this->linkParameters() ), $atend );
 			$wgOut->addHTML( "<br />{$sl}</p>\n" );
